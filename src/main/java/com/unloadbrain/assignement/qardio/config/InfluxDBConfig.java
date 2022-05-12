@@ -1,12 +1,11 @@
 package com.unloadbrain.assignement.qardio.config;
 
+import com.influxdb.LogLevel;
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.domain.HealthCheck;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
-import org.influxdb.dto.Pong;
-import org.influxdb.dto.Query;
-import org.influxdb.impl.InfluxDBResultMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,28 +41,23 @@ public class InfluxDBConfig {
     }
 
     @Bean
-    public InfluxDB influxDB() {
+    public InfluxDBClient influxDB() {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(readTimeout, TimeUnit.SECONDS);
-        InfluxDB influxDB = InfluxDBFactory.connect(url, username, password, builder);
+        InfluxDBClient influxDBClient = InfluxDBClientFactory.create(url, "ffzQs8mqsyG50Owsrpk5_kES9SGb_t24RV2jbJZI0Q6i0I9cIqFutDrYJAgBmJX3CPbHkn3wym-A8vvPNXAQjw==".toCharArray(), "Personal" ,"sensordata");
 
-        influxDB.query(new Query("CREATE DATABASE " + database, database));
-        influxDB.setDatabase(database);
 
-        influxDB.setRetentionPolicy(retentionPolicy);
-        influxDB.setLogLevel(InfluxDB.LogLevel.BASIC);
+        //influxDBClient.getQueryApi().query("CREATE DATABASE " + database);
 
-        Pong response = influxDB.ping();
+        influxDBClient.setLogLevel(LogLevel.BASIC);
+
+        HealthCheck response = influxDBClient.health();
         if ("unknown".equalsIgnoreCase(response.getVersion())) {
             log.error("Error pinging InfluxDB server.");
         }
 
-        return influxDB;
+        return influxDBClient;
     }
 
-    @Bean
-    public InfluxDBResultMapper influxDBResultMapper() {
-        return new InfluxDBResultMapper();
-    }
 
 }

@@ -1,12 +1,12 @@
 package com.unloadbrain.assignement.qardio.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.influxdb.annotations.Column;
+import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.influxdb.annotation.Column;
-import org.influxdb.annotation.Measurement;
 
 import java.time.Instant;
 
@@ -17,7 +17,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "TemperatureSensor", database = "sensordata")
+@Measurement(name = "TemperatureSensor")
 public class TemperatureSensorQueryResult {
 
     @JsonIgnore

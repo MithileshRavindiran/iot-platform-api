@@ -1,8 +1,8 @@
 package com.unloadbrain.assignement.qardio.service;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.write.Point;
 import com.unloadbrain.assignement.qardio.dto.message.TemperatureSensorDataMessage;
-import org.influxdb.InfluxDB;
-import org.influxdb.dto.Point;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -17,12 +17,12 @@ import static org.mockito.Mockito.verify;
 
 public class TemperatureSensorDataPersistenceServiceTest {
 
-    private InfluxDB influxDB;
+    private InfluxDBClient influxDB;
     private TemperatureSensorDataPersistenceService temperatureSensorDataPersistenceService;
 
     @Before
     public void setUp() throws Exception {
-        this.influxDB = mock(InfluxDB.class);
+        this.influxDB = mock(InfluxDBClient.class);
         this.temperatureSensorDataPersistenceService = new TemperatureSensorDataPersistenceService(influxDB);
     }
 
@@ -44,7 +44,7 @@ public class TemperatureSensorDataPersistenceServiceTest {
 
         // Then
 
-        verify(influxDB).write(argumentCaptor.capture());
+        verify(influxDB).getWriteApiBlocking().writePoint(argumentCaptor.capture());
         Point point = argumentCaptor.getValue();
 
         // Point class does not have getters, hence using Reflection.

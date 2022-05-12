@@ -1,11 +1,7 @@
 package com.unloadbrain.assignement.qardio.domain.repository;
 
+import com.influxdb.client.InfluxDBClient;
 import com.unloadbrain.assignement.qardio.domain.model.TemperatureSensorQueryResult;
-import com.unloadbrain.assignement.qardio.exception.DataAccessException;
-import org.influxdb.InfluxDB;
-import org.influxdb.dto.Query;
-import org.influxdb.dto.QueryResult;
-import org.influxdb.impl.InfluxDBResultMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,12 +12,10 @@ import java.util.List;
 @Component
 public class TemperatureSensorDataRepository {
 
-    private final InfluxDB influxDB;
-    private final InfluxDBResultMapper resultMapper;
+    private final InfluxDBClient influxDB;
 
-    public TemperatureSensorDataRepository(InfluxDB influxDB, InfluxDBResultMapper resultMapper) {
+    public TemperatureSensorDataRepository(InfluxDBClient influxDB) {
         this.influxDB = influxDB;
-        this.resultMapper = resultMapper;
     }
 
     /**
@@ -36,12 +30,8 @@ public class TemperatureSensorDataRepository {
 
         String query = buildQuery(deviceId, startTime, endTime);
 
-        QueryResult queryResult = influxDB.query(new Query(query));
-        if (queryResult.hasError()) {
-            throw new DataAccessException("Could not access influxDB because of " + queryResult.getError());
-        }
-
-        return resultMapper.toPOJO(queryResult, TemperatureSensorQueryResult.class);
+        List<TemperatureSensorQueryResult> queryResult = influxDB.getQueryApi().query(query, TemperatureSensorQueryResult.class);
+        return queryResult;
     }
 
     /**

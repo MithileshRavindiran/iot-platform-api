@@ -29,7 +29,7 @@ app:
   influxdb:
     url: http://localhost:8086
     user: admin
-    pass: admin
+    pass: SevPan@30
     database: sensordata
     retention-policy: autogen
     read-timeout-in-seconds: 100

@@ -1,11 +1,8 @@
 package com.unloadbrain.assignement.qardio.domain.repository;
 
+import com.influxdb.client.InfluxDBClient;
 import com.unloadbrain.assignement.qardio.domain.model.TemperatureSensorQueryResult;
 import com.unloadbrain.assignement.qardio.exception.DataAccessException;
-import org.influxdb.InfluxDB;
-import org.influxdb.dto.Query;
-import org.influxdb.dto.QueryResult;
-import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,13 +22,13 @@ public class TemperatureSensorDataRepositoryTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private InfluxDB influxDBMock;
+    private InfluxDBClient influxDBMock;
     private TemperatureSensorDataRepository repository;
 
     @Before
     public void setUp() throws Exception {
-        this.influxDBMock = mock(InfluxDB.class);
-        this.repository = new TemperatureSensorDataRepository(influxDBMock, new InfluxDBResultMapper());
+        this.influxDBMock = mock(InfluxDBClient.class);
+        this.repository = new TemperatureSensorDataRepository(influxDBMock);
     }
 
     @Test
@@ -39,25 +36,8 @@ public class TemperatureSensorDataRepositoryTest {
 
         // Given
 
-        QueryResult.Series series = new QueryResult.Series();
-        series.setName("TemperatureSensor");
-        series.setColumns(Arrays.asList("time", "temperatureInFahrenheit"));
-        series.setValues(Arrays.asList(
-                Arrays.asList("2019-07-14T22:19:58Z", 20.0),
-                Arrays.asList("2019-07-14T22:19:59Z", 21.0)
-        ));
-        QueryResult.Result result = new QueryResult.Result();
-        result.setSeries(Collections.singletonList(series));
 
-        QueryResult queryResult = new QueryResult() {
-
-            @Override
-            public List<Result> getResults() {
-                return Collections.singletonList(result);
-            }
-        };
-
-        when(influxDBMock.query(any(Query.class))).thenReturn(queryResult);
+        when(influxDBMock.getQueryApi().query(any(String.class))).thenReturn(null);
 
         // When
         List<TemperatureSensorQueryResult> temperatureSensorQueryResultList
@@ -78,15 +58,6 @@ public class TemperatureSensorDataRepositoryTest {
     public void shouldThrowExceptionWhenQueryResultHasError() {
 
         // Given
-
-        QueryResult queryResult = new QueryResult() {
-            @Override
-            public boolean hasError() {
-                return true;
-            }
-        };
-
-        when(influxDBMock.query(any(Query.class))).thenReturn(queryResult);
 
         thrown.expect(DataAccessException.class);
         thrown.expectMessage("Could not access influxDB because of");
