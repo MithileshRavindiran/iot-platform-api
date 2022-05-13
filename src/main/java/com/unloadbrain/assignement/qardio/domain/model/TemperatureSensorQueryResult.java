@@ -24,6 +24,6 @@ public class TemperatureSensorQueryResult {
     @Column(name = "time")
     private Instant time;
 
-    @Column(name = "temperatureInFahrenheit")
-    private double temperatureInFahrenheit;
+    @Column
+    Double value;
 }

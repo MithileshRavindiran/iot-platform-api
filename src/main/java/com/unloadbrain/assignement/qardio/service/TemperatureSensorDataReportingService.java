@@ -39,7 +39,7 @@ public class TemperatureSensorDataReportingService {
                 = repository.getTemperatures(loggedInUserService.getLoggedInDeviceId(), startTime, endTime);
 
         List<TemperatureSensorData> dataPoints = queryResults.stream()
-                .map(data -> new TemperatureSensorData(data.getTime().getEpochSecond(), data.getTemperatureInFahrenheit()))
+                .map(data -> new TemperatureSensorData(data.getTime().getEpochSecond(), data.getValue()))
                 .collect(Collectors.toList());
 
         return TemperatureSensorDataResponse.builder()

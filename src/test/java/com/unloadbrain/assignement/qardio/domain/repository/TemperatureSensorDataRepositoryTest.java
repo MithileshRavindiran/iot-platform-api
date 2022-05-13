@@ -48,10 +48,10 @@ public class TemperatureSensorDataRepositoryTest {
         assertEquals(2, temperatureSensorQueryResultList.size());
 
         assertEquals("2019-07-14T22:19:58Z", temperatureSensorQueryResultList.get(0).getTime().toString());
-        assertEquals(20.0, temperatureSensorQueryResultList.get(0).getTemperatureInFahrenheit(), 1e-15);
+        assertEquals(20.0, temperatureSensorQueryResultList.get(0).getValue(), 1e-15);
 
         assertEquals("2019-07-14T22:19:59Z", temperatureSensorQueryResultList.get(1).getTime().toString());
-        assertEquals(21.0, temperatureSensorQueryResultList.get(1).getTemperatureInFahrenheit(), 1e-15);
+        assertEquals(21.0, temperatureSensorQueryResultList.get(1).getValue(), 1e-15);
     }
 
     @Test

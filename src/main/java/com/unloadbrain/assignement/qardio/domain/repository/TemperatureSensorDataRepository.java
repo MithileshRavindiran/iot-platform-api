@@ -2,6 +2,7 @@ package com.unloadbrain.assignement.qardio.domain.repository;
 
 import com.influxdb.client.InfluxDBClient;
 import com.unloadbrain.assignement.qardio.domain.model.TemperatureSensorQueryResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.List;
 public class TemperatureSensorDataRepository {
 
     private final InfluxDBClient influxDB;
+
+    @Value("${app.influxdb.bucket}")
+    String bucket;
 
     public TemperatureSensorDataRepository(InfluxDBClient influxDB) {
         this.influxDB = influxDB;
@@ -45,17 +49,40 @@ public class TemperatureSensorDataRepository {
      */
     private String buildQuery(String deviceId, long startTime, long endTime) {
 
+        //String flux = "from(bucket:) |> range(start:0) |> filter(fn: (r) => r[\"_measurement\"] == \"sensor\") |> filter(fn: (r) => r[\"sensor_id\"] == \"TLM0100\"or r[\"sensor_id\"] == \"TLM0101\" or r[\"sensor_id\"] == \"TLM0103\" or r[\"sensor_id\"] == \"TLM0200\") |> sort() |> yield(name: \"sort\")";
         StringBuilder query = new StringBuilder();
-        query.append("Select time, temperatureInFahrenheit from TemperatureSensor");
-        query.append(" WHERE deviceId = '");
-        query.append(deviceId);
-        query.append('\'');
-        query.append(" AND time >= ");
-        query.append(startTime);
-        query.append('s');
-        query.append(" AND time <= ");
-        query.append(endTime);
-        query.append('s');
+
+        query.append("from(bucket:").append("\"").append(bucket).append("\")")
+                .append(" |> range(start: ").append(startTime).append(",").append("stop:").append(endTime).append(")")
+                .append(" |> filter(fn: (r) => r._measurement == \"TemperatureSensor\")")
+                .append(" |> filter(fn: (r) => r._field == \"temperatureInFahrenheit\")")
+                        .append("|> sort(columns: [\"_value\"], desc: true)");
+
+
+        //query to sort for max and min
+
+        /**
+         *
+         * from(bucket: "sensordata")
+         *            |> range(start: 0)
+         *            |> filter(fn: (r) => r._measurement == "TemperatureSensor")
+         *            |> filter(fn: (r) => r._field == "temperatureInFahrenheit")
+         *            |> sort(columns: ["_value"], desc: true)
+         *
+         */
+
+
+
+        //query within time range
+        /**
+         *
+         * from(bucket: "sensordata")
+         *   |> range(start: 2022-05-12T20:49:59Z, stop: 2022-05-12T21:49:59Z)
+         *   |> filter(fn: (r) => r._measurement == "TemperatureSensor")
+         *   |> filter(fn: (r) => r._field == "temperatureInFahrenheit")
+         *   |> sort(columns: ["_value"], desc: true)
+         *
+         */
 
         return query.toString();
     }

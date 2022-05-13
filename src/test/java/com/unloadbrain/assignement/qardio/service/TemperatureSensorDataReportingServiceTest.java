@@ -39,7 +39,7 @@ public class TemperatureSensorDataReportingServiceTest {
 
         Instant instant = Instant.ofEpochSecond(1563142798);
         TemperatureSensorQueryResult queryResult
-                = TemperatureSensorQueryResult.builder().time(instant).temperatureInFahrenheit(10.0).build();
+                = TemperatureSensorQueryResult.builder().time(instant).value(10.0).build();
 
         when(repository.getTemperatures(anyString(), anyLong(), anyLong()))
                 .thenReturn(Collections.singletonList(queryResult));

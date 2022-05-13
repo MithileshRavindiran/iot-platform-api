@@ -20,22 +20,22 @@ import java.util.concurrent.TimeUnit;
 public class InfluxDBConfig {
 
     private final String url;
-    private final String username;
-    private final String password;
-    private final String database;
+    private final String token;
+    private final String organisation;
+    private final String bucket;
     private final String retentionPolicy;
     private final long readTimeout;
 
     public InfluxDBConfig(@Value("${app.influxdb.url}") String url,
-                          @Value("${app.influxdb.user}") String username,
-                          @Value("${app.influxdb.pass}") String password,
-                          @Value("${app.influxdb.database}") String database,
+                          @Value("${app.influxdb.token}") String token,
+                          @Value("${app.influxdb.org}") String organisation,
+                          @Value("${app.influxdb.bucket}") String bucket,
                           @Value("${app.influxdb.retention-policy}") String retentionPolicy,
                           @Value("${app.influxdb.read-timeout-in-seconds}") long readTimeout) {
         this.url = url;
-        this.username = username;
-        this.password = password;
-        this.database = database;
+        this.token = token;
+        this.organisation = organisation;
+        this.bucket = bucket;
         this.retentionPolicy = retentionPolicy;
         this.readTimeout = readTimeout;
     }
@@ -43,11 +43,7 @@ public class InfluxDBConfig {
     @Bean
     public InfluxDBClient influxDB() {
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(readTimeout, TimeUnit.SECONDS);
-        InfluxDBClient influxDBClient = InfluxDBClientFactory.create(url, "ffzQs8mqsyG50Owsrpk5_kES9SGb_t24RV2jbJZI0Q6i0I9cIqFutDrYJAgBmJX3CPbHkn3wym-A8vvPNXAQjw==".toCharArray(), "Personal" ,"sensordata");
-
-
-        //influxDBClient.getQueryApi().query("CREATE DATABASE " + database);
+        InfluxDBClient influxDBClient = InfluxDBClientFactory.create(url, token.toCharArray(), organisation ,bucket);
 
         influxDBClient.setLogLevel(LogLevel.BASIC);
 

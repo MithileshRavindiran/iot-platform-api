@@ -28,9 +28,9 @@ app:
 
   influxdb:
     url: http://localhost:8086
-    user: admin
-    pass: SevPan@30
-    database: sensordata
+    token: Oro_1dw3IkskJYK4e7bAwM5v0QF5LCRuj9pj8NTr9d-XsOXLUOwiwYAzydNAkAO9bYaNBFr8AkLNfpl9fIisiw==
+    org: Personal
+    bucket: sensordata
     retention-policy: autogen
     read-timeout-in-seconds: 100
 
